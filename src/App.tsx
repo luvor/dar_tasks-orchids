@@ -29,27 +29,49 @@ function App() {
     try {
       let lst: Actor[] = [];
       const res = await api.get("/actors.json");
-      const asyncRes = await Promise.all(
-        res.data.forEach(async (i: Actor) => {
-          if (res) {
-            lst.push(i);
-          }
-        })
-      );
-      setActors(lst);
+      console.log(res.data.slice(20));
+
+      // for (let index = 0; index < res.data.length; index++) {
+      //   const element = res.data[index];
+      //   if (await checkIsValid(element)) {
+      //     lst.push(element);
+      //   }
+      // }
+
+      setActors(shuffle(res.data).slice(0, 50));
     } catch (err) {
       console.log(err);
     }
   };
 
-  const checkIsValid = async (image_path: string) => {
-    const res = await tmdb.get(image_path);
-    if (res.data) {
-      return true;
-    } else {
-      return false;
+  const shuffle = (array: []) => {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
     }
+
+    return array;
   };
+
+  // const checkIsValid = async (image_path: string) => {
+  //   const res = await tmdb.get(image_path);
+  //   if (res.data) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
 
   return (
     <div>
@@ -89,6 +111,8 @@ function App() {
             );
           })}
         </div>
+        <h3 className="text-center text-lg bg-orange-200">Actors</h3>
+
         <div className="pa-2 flex flex-row flex-wrap justify-around">
           {actors?.map((item) => {
             return <ActorCard key={item.name} actor={item} />;
